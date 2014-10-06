@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <style>
+        img{
+          max-width: 150px;
+        }
+
+        td{
+          font-size: 14px;
+        }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-heading">Configuration</div>
+        <div class="panel-body">
+          <div class='row'>
+            <div class="col-xs-6">
+              <input type="url" value="" placeholder="http://url.com/file.json" />
+              <input class="btn" type="button" value="load" />
+            </div>
+            <div class="col-xs-6">
+              <ul class="quicklink">
+                <li><a href="http://localhost:8088/scrape/fr.muaythaitv.com">fr.muaythaitv.com</a></li>
+                <li><a href="http://localhost:8088/scrape/jeuxvideo.fr">jeuxvideo.fr</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Data</div>
+        <div class="panel-body">
+          <table class="table table-striped table-condensed">
+            <thead><tr></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script>
+      $(function(){
+        var $url = $("input[type='url']");
+        var $button = $("input[type='button']");
+
+        $(".quicklink a").on('click', function(e){
+            e.preventDefault();
+            $url.val($(e.target).attr('href'));
+            $button.trigger('click');
+            return false;
+        });
+
+        $button.on('click', function(){
+          var url = $url.val();
+          $.get(url, function(data){
+            makeTable(data);
+          }, 'json');
+        });
+
+        function makeTable(data) {
+          var struct = [];
+          $.each(data, function(){
+            $.each(this, function(e){
+              struct[e] = e;
+            });
+          });
+
+          $('table > thead > tr > th').remove();
+          for(var i in struct) {
+            $('table > thead > tr').append($('<th>').html(i));
+          }
+
+          $('table > tbody > tr').remove();
+          $.each(data, function(){
+            var $tr = $('<tr>');
+
+            for(var i in struct) {
+              var field = this[i];
+
+              if (field && field.match(/\.(jpeg|jpg|gif|png)/) != null) {
+                  field = $('<img>').attr('src', field);
+              } else if (field && field.match(/^(http)./) != null) {
+                  field = $('<a>').attr('href', field).html('link');
+              }
+
+              $tr.append(
+                $('<td>').html(field)
+              );
+            }
+
+            $('table > tbody').append($tr);
+          });
+
+        }
+      });
+    </script>
+  </body>
+</html>

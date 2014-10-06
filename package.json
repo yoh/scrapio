@@ -1,0 +1,10 @@
+{
+  "name": "scrapio",
+  "description": "Node Js multi-sites scraping implementation",
+  "dependencies": {
+    "underscore": "1.7.0",
+    "express": "4.9.5",
+    "request": "2.45.0",
+    "cheerio": "0.17.0"
+  }
+}
